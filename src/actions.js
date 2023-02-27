@@ -1,42 +1,27 @@
-// export const updateState = (files) => ({
-//   type: 'UPDATE_STATE',
-//   payload: files,
-// });
-
-// export const scanDirectory = (path) => ({
-//   type: 'SCAN_DIRECTORY',
-//   payload: path,
-// });
-// App.js
-// actions.js
-
-export const SCAN_DIRECTORY = 'SCAN_DIRECTORY';
-export const UPDATE_STATE = 'UPDATE_STATE';
-export const DOWNLOAD_STATE = 'DOWNLOAD_STATE';
-
-export const scanDirectory = (directoryPath) => {
-  return (dispatch) => {
-    fetch(`/scan?directoryPath=${directoryPath}`)
-      .then((res) => res.json())
-      .then((data) => {
-        dispatch({
-          type: SCAN_DIRECTORY,
-          payload: data.files.map((file) => ({
-            name: file,
-            active: true,
-          })),
-        });
-      })
-      .catch((err) => console.error(err));
-  };
+export const fetchFiles = () => async (dispatch) => {
+  try {
+    const response = await fetch('/list');
+    const data = await response.json();
+    dispatch({ type: 'FETCH_FILES_SUCCESS', payload: data });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-export const updateState = (files) => {
-  return {
-    type: UPDATE_STATE,
-    payload: files,
-  };
+export const scanDirectory = (directoryPath) => async (dispatch) => {
+  try {
+    const response = await fetch(`/scan?path=${directoryPath}`);
+    const data = await response.json();
+    dispatch(updateFiles(data));
+  } catch (error) {
+    console.log(error);
+  }
 };
+
+export const updateFiles = (files) => ({
+  type: 'UPDATE_FILES',
+  payload: files,
+});
 
 export const downloadState = () => {
   return (dispatch, getState) => {
@@ -50,6 +35,6 @@ export const downloadState = () => {
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
-    dispatch({ type: DOWNLOAD_STATE });
+    dispatch({ type: 'DOWNLOAD_STATE' });
   };
 };

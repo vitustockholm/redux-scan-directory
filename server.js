@@ -1,77 +1,42 @@
 const express = require('express');
 const fs = require('fs');
-const { createStore } = require('redux');
+const path = require('path');
+const cors = require('cors');
 
-// Define the initial state of the app
-const initialState = {
-  files: [],
+const app = express();
+app.use(cors());
+
+const directoryPath = '/';
+
+const getFiles = () => {
+  const files = fs.readdirSync(directoryPath);
+  return files.map((file) => ({
+    name: file,
+    active: true,
+  }));
 };
 
-// Define the reducer function to handle state changes
-function fileReducer(state = initialState, action) {
-  switch (action.type) {
-    case 'SCAN_DIRECTORY':
-      // Read the directory and update the state with the list of files
-      const fileNames = fs.readdirSync(action.path);
-      const newFiles = fileNames.map((fileName) => ({
-        name: fileName,
-        active: true,
-      }));
-      return {
-        ...state,
-        files: newFiles,
-      };
-    case 'MARK_INACTIVE_FILES':
-      // Mark any files in the state that are no longer in the directory as inactive
-      const updatedFiles = state.files.map((file) => {
-        if (fs.existsSync(`${action.path}/${file.name}`)) {
-          return file;
-        } else {
-          return {
-            ...file,
-            active: false,
-          };
-        }
-      });
-      return {
-        ...state,
-        files: updatedFiles,
-      };
-    default:
-      return state;
-  }
-}
+let files = getFiles();
 
-// Create the Redux store with the reducer and initial state
-const store = createStore(fileReducer);
-
-// Define the express app and middleware
-const app = express();
-app.use(express.json());
-
-// Define the endpoints
 app.get('/list', (req, res) => {
-  res.json(store.getState().files);
+  res.send(files);
 });
 
-app.post('/scan', (req, res) => {
-  const { path } = req.body;
-  store.dispatch({ type: 'SCAN_DIRECTORY', path });
-  res.send('Directory scanned');
-});
-
-app.post('/mark-inactive', (req, res) => {
-  const { path } = req.body;
-  store.dispatch({ type: 'MARK_INACTIVE_FILES', path });
-  res.send('Inactive files marked');
+app.get('/scan', (req, res) => {
+  files = getFiles();
+  res.send({ message: 'Directory scanned successfully' });
 });
 
 app.get('/download-state', (req, res) => {
-  res.json(store.getState().files);
+  const dataStr =
+    'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(files));
+  res.setHeader(
+    'Content-Disposition',
+    'attachment; filename="file_state.json"'
+  );
+  res.send(dataStr);
 });
 
-// Start the server
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`Server listening on http://127.0.0.1:${PORT}`);
+app.listen(3001, () => {
+  console.log('Server running on port 3001');
 });
