@@ -1,74 +1,22 @@
-npm install express redux body-parser cors
-npm i fs express cors bodyParser
-npm install redux-thunk
 
-# Getting Started with Create React App
+To start App:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+    git clone repo url *.git
+    npm i
+    run the server node server.js
+    run frontend cra app npm start
+    change defined directory patch for scan it
 
-## Available Scripts
+Libs i used in this CRA project: npm install express redux body-parser cors redux-thunk
 
-In the project directory, you can run:
+TO DO : decode downloaded-state from %%%% /////////////////////////////// import fs from 'fs'; import path from 'path'; import { promisify } from 'util';
 
-### `npm start`
+const readdir = promisify(fs.readdir); const stat = promisify(fs.stat);
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+const dirPath = __dirname; // Update with your desired directory path
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+const isDirectory = async (path) => (await stat(path)).isDirectory();
 
-### `npm test`
+const getDirectoryContents = async (dir) => { const files = await readdir(dir); const contents = await Promise.all( files.map(async (file) => { const filePath = path.join(dir, file); if (await isDirectory(filePath)) { return { name: file, active: true }; } return { name: file, active: true }; }) // promisify function to convert the Node.js callback-style functions fs.readdir and fs.stat into Promise-based functions. // move the directory path into a variable named dirPath and replaced the hardcoded path in the original code. // async/await to make the code more readable and avoid callback hell. // created a new function called getDirectoryContents that takes a directory path and returns a Promise that resolves to an array of objects representing the directory's contents (subdirectories and files). // replaced the hardcoded files variable with the result of calling the getDirectoryContents function with the dirPath variable. //update the response to set the appropriate headers and send the dataStr variable. ); return contents; };
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+app.get('/download-state', async (req, res) => { const files = await getDirectoryContents(dirPath); const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(files)); res.setHeader( 'Content-Disposition', 'attachment; filename="file_state.json"' ); res.send(dataStr); }); /////////////////////////////////////
