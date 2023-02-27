@@ -36,7 +36,7 @@ if (await isDirectory(filePath)) { return { name: file, active: true };<br />
 
 
 
-// changes for download-state route<br />
+// changes for download-state route at server.js backend <br />
 app.get('/download-state', async (req, res) => { const files = await getDirectoryContents(dirPath);<br />
 const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(files));<br />
 res.setHeader( 'Content-Disposition', 'attachment; filename="file_state.json"' ); <br /> res.send(dataStr); }); <br />
