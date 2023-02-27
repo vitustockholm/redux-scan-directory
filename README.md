@@ -16,19 +16,19 @@ Like always TO DO :
 
 decode downloaded-state from %%%% 
 
-import fs from 'fs'; import path from 'path'; import { promisify } from 'util';
+import fs from 'fs'; <br />import path from 'path';<br /> import { promisify } from 'util';
 
-const readdir = promisify(fs.readdir); const stat = promisify(fs.stat);
+const readdir = promisify(fs.readdir);<br /> const stat = promisify(fs.stat);<br />
 // Update with your desired directory path
-const dirPath = __dirname; 
-const isDirectory = async (path) => (await stat(path)).isDirectory();
+const dirPath = __dirname; <br />
+const isDirectory = async (path) => (await stat(path)).isDirectory();<br />
 
-const getDirectoryContents = async (dir) => { const files = await readdir(dir); 
+const getDirectoryContents = async (dir) => { const files = await readdir(dir); <br />
 
-const contents = await Promise.all( files.map(async (file) => { const filePath = path.join(dir, file); 
+const contents = await Promise.all( files.map(async (file) => { const filePath = path.join(dir, file); <br />
 
-if (await isDirectory(filePath)) { return { name: file, active: true };
-} return { name: file, active: true }; })
+if (await isDirectory(filePath)) { return { name: file, active: true };<br />
+} return { name: file, active: true }; })<br /><br />
 // promisify function to convert the Node.js callback-style functions fs.readdir and fs.stat into Promise-based functions. 
 // move the directory path into a variable named dirPath and replaced the hardcoded path in the original code. 
 // async/await to make the code more readable and avoid callback hell. 
