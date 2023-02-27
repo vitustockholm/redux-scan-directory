@@ -22,13 +22,11 @@ const readdir = promisify(fs.readdir);<br /> const stat = promisify(fs.stat);<br
 // Update with your desired directory path
 const dirPath = __dirname; <br />
 const isDirectory = async (path) => (await stat(path)).isDirectory();<br />
-
 const getDirectoryContents = async (dir) => { const files = await readdir(dir); <br />
-
 const contents = await Promise.all( files.map(async (file) => { const filePath = path.join(dir, file); <br />
-
 if (await isDirectory(filePath)) { return { name: file, active: true };<br />
-} return { name: file, active: true }; })<br /><br />
+} return { name: file, active: true }; })<br />
+); return contents; };<br />
 // promisify function to convert the Node.js callback-style functions fs.readdir and fs.stat into Promise-based functions. <br />
 // move the directory path into a variable named dirPath and replaced the hardcoded path in the original code. <br />
 // async/await to make the code more readable and avoid callback hell. <br />
@@ -36,7 +34,7 @@ if (await isDirectory(filePath)) { return { name: file, active: true };<br />
 // replaced the hardcoded files variable with the result of calling the getDirectoryContents function with the dirPath variable. <br />
 //update the response to set the appropriate headers and send the dataStr variable.<br />
 
-); return contents; };<br />
+
 
 // changes for download-state route<br />
 app.get('/download-state', async (req, res) => { const files = await getDirectoryContents(dirPath);<br />
