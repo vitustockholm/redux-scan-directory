@@ -1,3 +1,7 @@
+npm install express redux body-parser cors
+npm i fs express cors bodyParser
+npm install redux-thunk
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
